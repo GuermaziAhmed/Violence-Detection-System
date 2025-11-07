@@ -1,0 +1,170 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# TensorFlow/Keras
+*.h5
+*.hdf5
+*.pb
+saved_model/
+*.ckpt
+*.ckpt.*
+checkpoint
+
+# Model files (large files)
+models/*.h5
+models/*.hdf5
+models/*.pb
+models/*.tflite
+models/*.onnx
+models/*.caffemodel
+models/*.pth
+models/*.pt
+
+# Datasets (too large for git)
+data/
+datasets/
+*.avi
+*.mp4
+*.mpg
+*.mov
+*.mkv
+*.wmv
+*.flv
+
+# Logs
+logs/
+*.log
+*.csv
+*.json
+runs/
+tensorboard/
+
+# Results and outputs
+results/*.png
+results/*.jpg
+results/*.jpeg
+results/*.pdf
+results/*.csv
+results/*.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+.DS_Store
+Thumbs.db
+
+# OS
+*.tmp
+*.temp
+.cache/
+
+# Training checkpoints (can be large)
+checkpoints/
+*.weights
+
+# Numpy arrays
+*.npy
+*.npz
+
+# Keep directory structure but ignore contents
+!data/.gitkeep
+!models/.gitkeep
+!logs/.gitkeep
+!results/.gitkeep
+
+# Exception: Keep small example files or configs
+!models/README.md
+!data/README.md
+!results/README.md
+
+# Temporary files
+*.bak
+*.backup
+*~
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# Distribution / packaging
+.Python
+*.manifest
+*.spec
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage
+.pytest_cache/
+.tox/
+.nox/
+
+# Translations
+*.mo
+*.pot
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Cython debug symbols
+cython_debug/
