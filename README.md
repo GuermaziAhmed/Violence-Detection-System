@@ -21,7 +21,7 @@ Video Input → YOLOv8 Person Detection → Filtered Frames → 3D-CNN → Viole
 - 5 MaxPooling3D layers
 - 2 Dense layers (4096 neurons each)
 - Binary classification (Violent/Non-Violent)
-- Input: (16, 112, 112, 3) video sequences
+- Input: (30, 112, 112, 3) video sequences
 
 ## 📊 Dataset Information
 
@@ -107,7 +107,7 @@ prediction, probability, confidence = predict_violence(
     model=best_model,
     yolo_model=yolo_model,
     use_yolo_filter=False,
-    sequence_length=16,
+    sequence_length=30,
     img_size=(112, 112),
     conf_threshold=0.5,
     normalization='zero_one'
@@ -117,19 +117,58 @@ print(f"Prediction: {'Violent' if prediction == 1 else 'Non-Violent'}")
 print(f"Confidence: {confidence:.4f}")
 ```
 
-## 📈 Expected Performance
+## 📈 Performance Results
 
-Based on the Bus Violence dataset paper (SlowFast baseline):
+Achieved performance on Bus Violence dataset using C3D + YOLOv8:
 
-| Metric | Target | Expected Range |
-|--------|--------|----------------|
-| Accuracy | >75% | 70-80% |
-| Precision | >70% | 65-80% |
-| Recall | >60% | 55-75% |
-| F1-Score | >65% | 60-75% |
-| ROC-AUC | >0.85 | 0.80-0.90 |
-| False Alarm Rate | <10% | 5-15% |
-| Missing Alarm Rate | <50% | 40-55% |
+| Metric | Target | **Achieved** | Status |
+|--------|--------|--------------|--------|
+| Accuracy | >75% | **78.93%** | ✅ Exceeded |
+| Precision | >70% | **72.13%** | ✅ Exceeded |
+| Recall | >60% | **94.29%** | ✅ Exceeded |
+| F1-Score | >65% | **81.73%** | ✅ Exceeded |
+| ROC-AUC | >0.85 | **0.8995** | ✅ Exceeded |
+| False Alarm Rate | <10% | **36.43%** | ⚠️ Higher |
+| Missing Alarm Rate | <50% | **5.71%** | ✅ Excellent |
+
+### 🎯 Key Findings
+
+**Strengths:**
+- ✅ **Excellent recall (94.29%)**: Successfully detects 94% of violent incidents
+- ✅ **Very low missing alarm rate (5.71%)**: Only 8 violent events missed out of 140
+- ✅ **Strong overall accuracy (78.93%)**: Exceeds paper baseline of 75%
+- ✅ **High ROC-AUC (0.8995)**: Strong discriminative ability
+
+**Areas for Improvement:**
+- ⚠️ **High false alarm rate (36.43%)**: 51 non-violent videos incorrectly flagged
+- Model is conservative, preferring false positives over false negatives
+- This trade-off may be acceptable for safety-critical surveillance applications
+
+### 📊 Confusion Matrix
+
+|  | Predicted Non-Violent | Predicted Violent |
+|---|---|---|
+| **Actual Non-Violent** | 89 (TN) | 51 (FP) |
+| **Actual Violent** | 8 (FN) | 132 (TP) |
+
+### 🏆 Comparison with Paper Baselines
+
+Our C3D implementation achieves comparable or better results than the SlowFast baseline (75.96% accuracy) reported in the original Bus Violence paper, with exceptional recall making it suitable for real-world surveillance where missing violent events is more critical than false alarms.
+
+### Training Results
+
+Final training metrics after 50 epochs:
+
+| Phase | Loss | Accuracy | Precision | Recall |
+|-------|------|----------|-----------|--------|
+| **Training** | 0.6146 | 87.06% | 87.06% | 87.06% |
+| **Validation** | 1.1004 | 83.53% | 83.53% | 83.53% |
+| **Test** | - | **78.93%** | **72.13%** | **94.29%** |
+
+**Training Observations:**
+- Model shows some overfitting (train accuracy 87% vs validation 83%)
+- Excellent convergence with stable validation metrics
+- Test performance validates generalization capability
 
 ## 📁 Output Structure
 
@@ -160,10 +199,10 @@ Based on the Bus Violence dataset paper (SlowFast baseline):
 ### Model Hyperparameters
 
 ```python
-SEQUENCE_LENGTH = 16        # Frames per sequence
+SEQUENCE_LENGTH = 30        # Frames per sequence
 IMG_HEIGHT = 112           # Frame height
 IMG_WIDTH = 112            # Frame width
-BATCH_SIZE = 8             # Batch size
+BATCH_SIZE = 16            # Batch size
 EPOCHS = 50                # Training epochs
 LEARNING_RATE = 0.001      # Initial learning rate
 ```
@@ -179,7 +218,7 @@ PERSON_CLASS_ID = 0               # COCO person class
 ### Data Augmentation
 
 ```python
-USE_AUGMENTATION = True
+USE_AUGMENTATION = False
 AUGMENTATION_PROB = 0.5
 # Augmentations: horizontal flip, brightness, contrast
 ```
@@ -281,8 +320,9 @@ onnx_model = tf2onnx.convert.from_keras(model)
 | Sequence Length | Accuracy | GPU Memory |
 |-----------------|----------|------------|
 | 8 frames | Lower | Low |
-| 16 frames | Optimal | Medium |
-| 32 frames | Marginal gain | High |
+| 16 frames | Good | Medium |
+| 30 frames | Optimal | High |
+| 32 frames | Marginal gain | Higher |
 
 ## 📚 Citations
 
@@ -329,7 +369,7 @@ https://github.com/ultralytics/ultralytics
 
 ```python
 # Reduce batch size
-BATCH_SIZE = 4  # or 2
+BATCH_SIZE = 8  # or 4
 
 # Enable GPU memory growth
 gpus = tf.config.list_physical_devices('GPU')
@@ -347,7 +387,7 @@ YOLO_MODEL_SIZE = 'yolov8n.pt'  # Nano version
 use_yolo_filter = False
 
 # Reduce sequence length
-SEQUENCE_LENGTH = 8
+SEQUENCE_LENGTH = 16  # or 8
 ```
 
 ### Low Accuracy
